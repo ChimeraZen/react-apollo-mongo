@@ -4,25 +4,25 @@ import { createToken } from '../../validation'
 
 // Login
 UserSchema.statics.signIn = async function(login, password, secret) {
-  if (!login || login === '') {
+  if (!login) {
     throw new UserInputError('A username or email is required')
   }
-
-  if (!password || password === '') {
+  
+  if (!password) {
     throw new UserInputError('A password is required')
   }
   
   const user = await this.findOne({ $or:[
     { 'username': login }, 
     { 'email': login }
-  ]}, async (err, user) => {
-    if (err) {
-      throw new UserInputError('No user found with these credentials')
-    }
+  ]})
+  
+  if (!user) {
+    throw new UserInputError('No user found with these credentials')
+  }
     
-    // Validate password
-    await user.validatePassword(password)
-  })
+  // Validate password
+  await user.validatePassword(password)
     
   return { token: createToken(user, secret, '30m') }
 }
