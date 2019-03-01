@@ -1,6 +1,6 @@
 import { AuthenticationError, UserInputError } from 'apollo-server'
 import { combineResolvers } from 'graphql-resolvers'
-import { isAdmin, createToken } from '../authorization'
+import { isAdmin, createToken } from '../../validation'
 
 module.exports = {
   signUp: async (
