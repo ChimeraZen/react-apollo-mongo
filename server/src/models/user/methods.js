@@ -1,9 +1,16 @@
+import { AuthenticationError } from 'apollo-server'
 import UserSchema from './schema'
+import bcrypt from 'bcrypt'
 
-// Remove password from user
-UserSchema.methods.toJSON = function() {
- const obj = this.toObject()
-  console.log('toJSON', obj)
- delete obj.password
- return obj
+UserSchema.pre('save', async function(saltRounds=10) {
+  this.password = await bcrypt.hash(this.password, saltRounds)
+})
+
+// Password
+UserSchema.methods.validatePassword = async function(password) {
+  const isValid = await bcrypt.compare(password, this.password)
+  
+  if (!isValid) {
+    throw new AuthenticationError('Invalid credentials.')
+  }
 }
