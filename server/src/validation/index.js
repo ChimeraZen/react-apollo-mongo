@@ -1,4 +1,4 @@
-import { ForbiddenError } from 'apollo-server'
+import { AuthenticationError, ForbiddenError } from 'apollo-server'
 import { combineResolvers, skip } from 'graphql-resolvers'
 import jwt from 'jsonwebtoken'
 
@@ -9,6 +9,18 @@ const createToken = async (user, secret, expiresIn) => {
     secret,
     { expiresIn }
   )
+}
+
+const verifyToken = async req => {
+  const token = req.headers["x-token"]
+
+  if (token) {
+    try {
+      return await jwt.verify(token, process.env.SECRET)
+    } catch (e) {
+      throw new AuthenticationError("Your session expired. Sign in again.")
+    }
+  }
 }
 
 const isAuthenticated = (parent, args, { me }) =>
@@ -39,6 +51,7 @@ const isMessageOwner = async (
 
 module.exports = {
   createToken,
+  verifyToken,
   isAuthenticated,
   isAdmin,
   isMessageOwner,
