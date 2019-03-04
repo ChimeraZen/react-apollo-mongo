@@ -13,4 +13,6 @@ UserSchema.methods.validatePassword = async function(password) {
   if (!isValid) {
     throw new AuthenticationError('Invalid credentials.')
   }
+  
+  return isValid
 }

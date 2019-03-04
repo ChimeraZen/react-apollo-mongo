@@ -7,10 +7,8 @@ module.exports = {
   Mutation,
   Subscription,
   Message: {
-    user: async (message, args, { models }) => {
-      const { userId } = message
-      
-      return await models.User.findOne({ _id: userId })
+    user: async (message, args, { loaders }) => {
+      return await loaders.user.load(message.userId)
     },
   },
 }
