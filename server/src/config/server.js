@@ -4,6 +4,9 @@ import schema from '../schema'
 import resolvers from '../resolvers'
 import models from '../models'
 
+import DataLoader from 'dataloader'
+import { batchUsers } from '../loaders'
+
 import { verifyToken } from '../validation'
 
 import dotenv from 'dotenv'
@@ -27,6 +30,9 @@ const server = new ApolloServer({
         models,
         me,
         secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys => batchUsers(keys, models)),
+        }
       }
     }
   }
