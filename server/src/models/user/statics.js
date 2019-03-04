@@ -15,7 +15,7 @@ UserSchema.statics.signIn = async function(login, password, secret) {
   const user = await this.findOne({ $or:[
     { 'username': login }, 
     { 'email': login }
-  ]})
+  ]}).select('+password')
   
   if (!user) {
     throw new UserInputError('No user found with these credentials')
